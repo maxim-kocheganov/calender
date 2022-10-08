@@ -1,0 +1,17 @@
+.dayBlock
+{
+    height: 40px;
+    width: 60px;
+    border: 5px dashed #0FA415;
+
+    margin: 3px;
+}
+.dayBlock.dayOff
+{
+    border: 5px dashed #a83242;
+}
+.day
+{
+    font-size: 29px;
+    margin: 0px;
+}
