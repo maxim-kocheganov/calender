@@ -253,8 +253,8 @@ class App extends Component {
           let weekdayElem = arr[index + dayOfWeek];
           localContent.push(<DayBlock onClick={this.clickDay} hideGray={hideNonRelated} key={String(Math.random()) + elem.day} currentMonth={weekdayElem.currentMonth} dayOff={weekdayElem.dayOff}>{weekdayElem.day}</DayBlock>)
         }
-      }
-      content.push(<WeekBlock key={String(Math.random()) + elem.day}>{localContent}</WeekBlock>)
+        content.push(<WeekBlock key={String(Math.random()) + elem.day}>{localContent}</WeekBlock>)
+      }      
     } )
     return content
   }
@@ -263,12 +263,11 @@ class App extends Component {
   {
     console.log('hit')
     let calender = []
-    for(let month = 1; month <= 6; month++)
+    for(let month = 1; month <= 12; month++)
     {
       calender.push(this.constructHTMLMounth(month,2022, true))
     }
     
-    calender.push(this.constructHTMLMounth(7,2022, true))
     console.log(calender)
     return (
       <div className="App">
