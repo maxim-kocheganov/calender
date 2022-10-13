@@ -10,6 +10,10 @@
 {
     border: 5px dashed #a83242;
 }
+.dayBlock.notCurrentMonth
+{
+    border: 5px dashed #bbbbbb;
+}
 .day
 {
     font-size: 29px;
