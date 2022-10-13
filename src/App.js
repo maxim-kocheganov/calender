@@ -68,35 +68,13 @@ class App extends Component {
 
   constructor(props) {
     super(props)
-    this.state.months = this.constructMonthes(2021,2023)
-    /*    
-    this.calender();
-    let mounth = [];
-    let day = 1;
-    let year = 2022;
-    // j - week number
-    for(let j = 1; j <= 4; j++)
-    {
-      let week = [];
-      // i - week day number
-      for(let i = 1; i <= 7; i++)
-      {
-        let _dayOff = false;
-        if (i >= 6) // if day off
-          _dayOff = true;
-        week.push({day:day,dayOff:_dayOff});
-        day++;
-      }
-      mounth.push(week)
-    }
-    this.state.currMounth = mounth;
-    */
-
+    this.state.months = this.constructMonthes(1990,2030)
   }
 
-  // Return json of the month 
+  // Return json of the month (raw)
   // Format: {month:month, day:dayCurr, weekday:weekday}
-  generateJsonOfMounth(monthGiven,yearGiven)
+  // Last argument - russian or USA style dates
+  generateJsonOfMounth(monthGiven,yearGiven, rusStyleWeekday = true)
   {
     // year table - ordered by month and year
     // {year, month, days (28-31)}
@@ -114,10 +92,11 @@ class App extends Component {
     // [1-12] - curr year mounthes
     // [13] - next year first mont
     if (yearTable.length !== 14)
-      throw 'YearTable out of bounds'
+      throw Error('YearTable out of bounds')
     let daysCountInPrevMonth = yearTable[monthGiven - 1].days;
     let daysCountInThisMonth = yearTable[monthGiven].days;
-    let dayCountInNextMounth = yearTable[monthGiven + 1].days;
+    //let dayCountInNextMounth = yearTable[monthGiven + 1].days;
+
     /* 
     console.log('daysCountInPrevMonth', daysCountInPrevMonth)
     console.log('daysCountInThisMonth', daysCountInThisMonth)
@@ -130,27 +109,37 @@ class App extends Component {
     {      
       let dayCurr = day_i;
       // Generate prev, curr, next week numbers
-      if (dayCurr <= 0)
+      if (dayCurr <= 0) // prev month
       {
         dayCurr += daysCountInPrevMonth
         weekday = this.weekday(yearGiven,monthGiven - 1,dayCurr)
-        month = monthGiven - 1
+        let prevMount = monthGiven - 1;
+        if (prevMount === 0)
+          prevMount = 12
+        month = prevMount
       }
-      else if (dayCurr >= 1 && dayCurr <= daysCountInThisMonth)
+      else if (dayCurr >= 1 && dayCurr <= daysCountInThisMonth) // current month
       {
         weekday = this.weekday(yearGiven,monthGiven,dayCurr)
         month = monthGiven
       }
-      else if (dayCurr > daysCountInThisMonth)
-      {
-        dayCurr = dayCurr - daysCountInThisMonth
-        weekday = this.weekday(yearGiven,monthGiven + 1,dayCurr)
-        month = monthGiven + 1
+      else if (dayCurr > daysCountInThisMonth) // next month
+      {        
+        dayCurr = dayCurr - daysCountInThisMonth        
+        let nextMonth = monthGiven + 1
+        if (nextMonth === 13)
+          nextMonth = 1
+        month = nextMonth
+        weekday = this.weekday(yearGiven,nextMonth,dayCurr)
+        //console.log('month', month, 'dayCurr', dayCurr, 'weekday', weekday)
       }
+
+      if (rusStyleWeekday)
+        weekday = (weekday + 6) % 7
       res.push({month:month, day:dayCurr, weekday:weekday})
       //console.log('monthGiven',month,'dayCurr',dayCurr,'weekday',weekday)      
     }
-    
+    console.log("raw",res)
     return res
   }
   // Filter out the unseen days of the month calender
@@ -160,7 +149,7 @@ class App extends Component {
     let resFiltred = [] // Filter out unseenable days
     let skipp = false;
     jsonMonth.forEach( (elem, index, arr) => {   
-      if (skipp == false)   
+      if (skipp === false)   
       {
         let prevMonth = month - 1;
         if (prevMonth === 0)
@@ -197,23 +186,36 @@ class App extends Component {
     } )
     return resFiltred
   }
-  // Paint day off & shift weekday (so week starts from monday)
-  paintJsonMonth(jsonMonth, month)
+  // Paint day off
+  // Last argument - russian or USA style dates
+  paintJsonMonth(jsonMonth, month, rusStyleWeekday = true)
   {
     let res = []    
     jsonMonth.forEach( (elem) => {
+      // Decide which days are off
       let dayOff = false
-      if ((elem.weekday === 6) || (elem.weekday === 0))
+      if (rusStyleWeekday)
       {
-        dayOff = true
+        if ((elem.weekday === 5) || (elem.weekday === 6))
+        {
+          dayOff = true
+        }
       }
+      else
+      {
+        if ((elem.weekday === 6) || (elem.weekday === 0))
+        {
+          dayOff = true
+        }
+      }
+      
       let currentMonth = false;
       if (elem.month === month)
         currentMonth = true
-      let alterWeekday = 0
-      alterWeekday = (elem.weekday + 6) % 7
+      //let alterWeekday = 0
+      //alterWeekday = (elem.weekday + 6) % 7
       //res.push({ ...elem, currentMonth: currentMonth, dayOff:dayOff})
-      res.push({ ...elem, currentMonth: currentMonth, dayOff:dayOff, alterWeekday:alterWeekday})
+      res.push({ ...elem, currentMonth: currentMonth, dayOff:dayOff})
     })
     //console.log(res)
     return res
@@ -245,9 +247,10 @@ class App extends Component {
   {
     return (
       <div className="App">
-        {this.constructHTMLMounth(10,2022)}        
+        {this.constructHTMLMounth(2,2023)}        
       </div>
     );
+    
   } 
 }
 
