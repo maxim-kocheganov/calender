@@ -19,3 +19,7 @@
     font-size: 29px;
     margin: 0px;
 }
+.hidden
+{
+    visibility: hidden; /*Hide element but keep space*/
+}

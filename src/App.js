@@ -6,6 +6,10 @@ import WeekBlock  from './blocks/weekBlock';
 class App extends Component {
   state = {currMounth:[],months:[]}
 
+  /////
+  ///// CALCULATION FUNCTIONS
+  /////
+
   // Return true is year is leap
   returnLeapYear = (year) =>
     {
@@ -24,6 +28,7 @@ class App extends Component {
       }
       return leapYear
   }
+
   // Return number of week day
   weekday = (year, month, day) =>
     {
@@ -36,6 +41,7 @@ class App extends Component {
         month -= 2
       return ((day + parseInt(31 * month / 12) + year + parseInt(year / 4) - parseInt(year / 100) + parseInt(year / 400)) % 7)
   }
+
   // Return day count in given month
   returnMonthCount = (isLeap, month) =>
     {
@@ -71,9 +77,14 @@ class App extends Component {
     this.state.months = this.constructMonthes(1990,2030)
   }
 
+  /////
+  ///// GENERATING CALENDAR VIEW
+  /////
+
   // Return json of the month (raw)
   // Format: {month:month, day:dayCurr, weekday:weekday}
   // Last argument - russian or USA style dates
+  // 1st call
   generateJsonOfMounth(monthGiven,yearGiven, rusStyleWeekday = true)
   {
     // year table - ordered by month and year
@@ -105,7 +116,7 @@ class App extends Component {
     let res = [];
     let weekday = 0;
     let month = 0;
-    for (let day_i = -7; day_i < 31 + 7; day_i++)
+    for (let day_i = -8; day_i < 31 + 8; day_i++)
     {      
       let dayCurr = day_i;
       // Generate prev, curr, next week numbers
@@ -139,11 +150,13 @@ class App extends Component {
       res.push({month:month, day:dayCurr, weekday:weekday})
       //console.log('monthGiven',month,'dayCurr',dayCurr,'weekday',weekday)      
     }
-    console.log("raw",res)
+    //console.log("raw",res)
     return res
   }
+
   // Filter out the unseen days of the month calender
   // It takes json with surplus days (usually +- 7 days on endge)
+  // 2nd call
   filterJsonOfMounth(jsonMonth, month)
   {
     let resFiltred = [] // Filter out unseenable days
@@ -186,8 +199,10 @@ class App extends Component {
     } )
     return resFiltred
   }
+
   // Paint day off
   // Last argument - russian or USA style dates
+  // 3rd call
   paintJsonMonth(jsonMonth, month, rusStyleWeekday = true)
   {
     let res = []    
@@ -220,13 +235,14 @@ class App extends Component {
     //console.log(res)
     return res
   }
+
   // Construct given month HTML
-  constructHTMLMounth (monthGiven, yearGiven)
+  // hideNonRelated hide gray days
+  constructHTMLMounth (monthGiven, yearGiven, hideNonRelated)
   {
     let content = []
-    let jsonMonth = this.filterJsonOfMounth(
-      this.generateJsonOfMounth(monthGiven, yearGiven),
-      monthGiven)
+    let jsonMonth= this.generateJsonOfMounth(monthGiven, yearGiven)
+    jsonMonth = this.filterJsonOfMounth(jsonMonth,monthGiven)
     jsonMonth = this.paintJsonMonth(jsonMonth, monthGiven)
     jsonMonth.forEach( (elem, index, arr) => {
       let localContent = []
@@ -235,22 +251,30 @@ class App extends Component {
         for(let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++)
         {
           let weekdayElem = arr[index + dayOfWeek];
-          localContent.push(<DayBlock key={Math.random()} currentMonth={weekdayElem.currentMonth} dayOff={weekdayElem.dayOff}>{weekdayElem.day}</DayBlock>)
+          localContent.push(<DayBlock onClick={this.clickDay} hideGray={hideNonRelated} key={String(Math.random()) + elem.day} currentMonth={weekdayElem.currentMonth} dayOff={weekdayElem.dayOff}>{weekdayElem.day}</DayBlock>)
         }
       }
-      content.push(<WeekBlock key={Math.random()}>{localContent}</WeekBlock>)
+      content.push(<WeekBlock key={String(Math.random()) + elem.day}>{localContent}</WeekBlock>)
     } )
     return content
   }
  
   render()
   {
+    console.log('hit')
+    let calender = []
+    for(let month = 1; month <= 6; month++)
+    {
+      calender.push(this.constructHTMLMounth(month,2022, true))
+    }
+    
+    calender.push(this.constructHTMLMounth(7,2022, true))
+    console.log(calender)
     return (
       <div className="App">
-        {this.constructHTMLMounth(2,2023)}        
+        {calender}      
       </div>
-    );
-    
+    );    
   } 
 }
 

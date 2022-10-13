@@ -2,13 +2,19 @@ import React from 'react'
 import './dayBlock.css'
 function DayBlock(props)
 { 
-    let classes = ['dayBlock']
+    let classesDiv = ['dayBlock']
     if (props.dayOff === true)
-        classes.push('dayOff')
+        classesDiv.push('dayOff')
     if (props.currentMonth === false)
-        classes.push('notCurrentMonth')
-    return  <div className={classes.join(" ")}>
-                <h1 className='day'>{props.children}</h1>
+    {
+        classesDiv.push('notCurrentMonth')
+        if (props.hideGray)
+        classesDiv.push('hidden')
+    }
+    //if (props.hiLight === )
+    let classesText = ['day']
+    return  <div onClick={props.onClick} className={classesDiv.join(" ")}>
+                <h1 className={classesText.join(" ")}>{props.children}</h1>
             </div>  
 }
 
