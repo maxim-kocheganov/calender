@@ -1,0 +1,8 @@
+.selection
+{
+    position: fixed;
+    width: 240px;
+    height: 480px;
+    left: 0;
+    background-color: rgb(255, 244, 230);
+}

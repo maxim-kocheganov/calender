@@ -1,10 +1,13 @@
 import React, { Component} from 'react'
 import './App.css';
 import DayBlock  from './blocks/dayBlock'
-import WeekBlock  from './blocks/weekBlock';
+import WeekBlock  from './blocks/weekBlock'
+import WeeksContainer from './blocks/WeeksContainer'
+import Selection from './gui/selection'
 
 class App extends Component {
-  state = {currMounth:[],months:[]}
+  state = {selected : null,
+           months:[]}
 
   /////
   ///// CALCULATION FUNCTIONS
@@ -30,7 +33,7 @@ class App extends Component {
   }
 
   // Return number of week day
-  weekday = (year, month, day) =>
+  weekday = (year, month, day, rusStyleWeekday = true) =>
     {
       if (month < 3)
       {
@@ -39,8 +42,11 @@ class App extends Component {
       }
       else
         month -= 2
-      return ((day + parseInt(31 * month / 12) + year + parseInt(year / 4) - parseInt(year / 100) + parseInt(year / 400)) % 7)
-  }
+      let weekday = ((day + parseInt(31 * month / 12) + year + parseInt(year / 4) - parseInt(year / 100) + parseInt(year / 400)) % 7)
+      if (rusStyleWeekday)
+        weekday = (weekday + 6) % 7
+      return weekday
+    }
 
   // Return day count in given month
   returnMonthCount = (isLeap, month) =>
@@ -147,7 +153,7 @@ class App extends Component {
 
       if (rusStyleWeekday)
         weekday = (weekday + 6) % 7
-      res.push({month:month, day:dayCurr, weekday:weekday})
+      res.push({ day:dayCurr, month:month, year:yearGiven, weekday:weekday})
       //console.log('monthGiven',month,'dayCurr',dayCurr,'weekday',weekday)      
     }
     //console.log("raw",res)
@@ -230,7 +236,17 @@ class App extends Component {
       //let alterWeekday = 0
       //alterWeekday = (elem.weekday + 6) % 7
       //res.push({ ...elem, currentMonth: currentMonth, dayOff:dayOff})
-      res.push({ ...elem, currentMonth: currentMonth, dayOff:dayOff})
+      
+      let isSelected = false
+      if (this.state.selected != null &&
+          this.state.selected.day === elem.day &&
+          this.state.selected.month === elem.month &&
+          this.state.selected.year === elem.year &&
+          this.state.selected.weekday === elem.weekday)
+          {
+            isSelected = true
+          }
+      res.push({ ...elem, currentMonth: currentMonth, dayOff:dayOff, selected:isSelected})
     })
     //console.log(res)
     return res
@@ -251,27 +267,85 @@ class App extends Component {
         for(let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++)
         {
           let weekdayElem = arr[index + dayOfWeek];
-          localContent.push(<DayBlock onClick={this.clickDay} hideGray={hideNonRelated} key={String(Math.random()) + elem.day} currentMonth={weekdayElem.currentMonth} dayOff={weekdayElem.dayOff}>{weekdayElem.day}</DayBlock>)
+          localContent.push(<DayBlock 
+            onClick={this.clickDay.bind(this, 
+              {day:weekdayElem.day, month:weekdayElem.month,
+              year:weekdayElem.year, weekday:weekdayElem.weekday}                                        )} 
+            hideGray={hideNonRelated} key={String(Math.random()) + elem.day}
+            selected={weekdayElem.selected} 
+            currentMonth={weekdayElem.currentMonth} 
+            dayOff={weekdayElem.dayOff}>{weekdayElem.day}</DayBlock>)
         }
         content.push(<WeekBlock key={String(Math.random()) + elem.day}>{localContent}</WeekBlock>)
       }      
     } )
     return content
   }
- 
+
+  /////
+  ///// GENERATING VIEW
+  /////
+
+  /////
+  ///// CALLBACKS
+  /////
+
+  clickDay(packedDay, event)
+  {
+    console.log(packedDay)
+    this.setState((state, props) => {      
+      return {selected : {day:packedDay.day,
+                             month:packedDay.month,
+                             year:packedDay.year,
+                             weekday:packedDay.weekday}}
+    })
+  }
+
+  clickSave(event)
+  {
+    //console.log(event)
+    console.log('save')
+    debugger
+  }
+
+  clickDiscard(event)
+  {
+    console.log('disc')
+    this.setState({selected : null})
+  }
+
+  onDateChange(event)
+  {
+    let value = event.target.value
+    value = String(value).split('-')
+    value = { day:parseInt(value[2]),
+      month:parseInt(value[1]),
+      year:parseInt(value[0])
+    }
+    value = {...value, weekday : this.weekday(value.year,value.month,value.day)} // TODO: fix weekday calculation
+    console.log(value)
+    this.setState( { selected :  value})
+  }
+
   render()
   {
-    console.log('hit')
     let calender = []
     for(let month = 1; month <= 12; month++)
     {
       calender.push(this.constructHTMLMounth(month,2022, true))
     }
     
-    console.log(calender)
     return (
       <div className="App">
-        {calender}      
+        <WeeksContainer>
+          {calender}
+        </WeeksContainer>
+        <Selection 
+          date={this.state.selected} 
+          onClickSave={this.clickSave.bind(this)} onClickDiscard={this.clickDiscard.bind(this)}
+          onDateChange={this.onDateChange.bind(this)}
+        ></Selection>
+                
       </div>
     );    
   } 

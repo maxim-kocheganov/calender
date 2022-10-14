@@ -3,6 +3,10 @@ import './dayBlock.css'
 function DayBlock(props)
 { 
     let classesDiv = ['dayBlock']
+    if (props.selected === true)
+    {
+        classesDiv.push('selected')
+    }
     if (props.dayOff === true)
         classesDiv.push('dayOff')
     if (props.currentMonth === false)
@@ -11,6 +15,7 @@ function DayBlock(props)
         if (props.hideGray)
         classesDiv.push('hidden')
     }
+    
     //if (props.hiLight === )
     let classesText = ['day']
     return  <div onClick={props.onClick} className={classesDiv.join(" ")}>

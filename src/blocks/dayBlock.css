@@ -6,6 +6,10 @@
 
     margin: 3px;
 }
+.dayBlock.selected
+{
+    border: 5px dashed #beb319!important;
+}
 .dayBlock.dayOff
 {
     border: 5px dashed #a83242;
