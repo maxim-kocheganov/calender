@@ -33,7 +33,7 @@ class App extends Component {
   }
 
   // Return number of week day
-  weekday = (year, month, day, rusStyleWeekday = true) =>
+  weekday = (year, month, day, rusStyleWeekday = false) =>
     {
       if (month < 3)
       {
@@ -43,8 +43,10 @@ class App extends Component {
       else
         month -= 2
       let weekday = ((day + parseInt(31 * month / 12) + year + parseInt(year / 4) - parseInt(year / 100) + parseInt(year / 400)) % 7)
+      
       if (rusStyleWeekday)
         weekday = (weekday + 6) % 7
+      
       return weekday
     }
 
@@ -322,7 +324,7 @@ class App extends Component {
       month:parseInt(value[1]),
       year:parseInt(value[0])
     }
-    value = {...value, weekday : this.weekday(value.year,value.month,value.day)} // TODO: fix weekday calculation
+    value = {...value, weekday : this.weekday(value.year,value.month,value.day, true)} // TODO: fix weekday calculation
     console.log(value)
     this.setState( { selected :  value})
   }
