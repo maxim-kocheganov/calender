@@ -8,7 +8,7 @@
 }
 .dayBlock.selected
 {
-    border: 5px dashed #beb319!important;
+    border: 5px solid #beb319!important;
 }
 .dayBlock.dayOff
 {
@@ -26,4 +26,68 @@
 .hidden
 {
     visibility: hidden; /*Hide element but keep space*/
+}
+.daySpace
+{
+    width: 80px;
+    height: 60px;
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arrow
+{
+    position: absolute;
+    color: #555007;
+    font-weight: bolder;
+    background-color: #beb319;
+    width: 30px;
+    height: 20px;
+    z-index: 1;
+}
+.arrow.bottom 
+{
+    bottom: -15px;
+}
+.arrow.top 
+{
+    top: -15px;
+}
+.arrow.left 
+{
+    left: -25px;
+}
+.arrow.right 
+{
+    right: -25px;
+}
+.plus
+{
+    position: absolute;
+    color: #555007;
+    font-weight: bolder;
+    background-color: #beb319;
+    width: 30px;
+    height: 20px;
+    z-index: 1;
+    bottom:-10px;
+    right:-10px;
+}
+.hoverable:hover
+{
+    background-color: #ebdc0d;
+}
+.close
+{
+    position: absolute;
+    background-color: #beb319;
+    width: 30px;
+    height: 20px;
+    top: -10px;
+    right:-10px;
+    color: red;
+    font-weight: lighter;
 }

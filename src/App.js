@@ -269,14 +269,19 @@ class App extends Component {
         for(let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++)
         {
           let weekdayElem = arr[index + dayOfWeek];
+          
           localContent.push(<DayBlock 
-            onClick={this.clickDay.bind(this, 
+            onClickDay={this.clickDay.bind(this, 
               {day:weekdayElem.day, month:weekdayElem.month,
-              year:weekdayElem.year, weekday:weekdayElem.weekday}                                        )} 
+              year:weekdayElem.year, weekday:weekdayElem.weekday})} 
+            onClickCross={this.clickCross.bind(this, 
+              {day:weekdayElem.day, month:weekdayElem.month,
+              year:weekdayElem.year, weekday:weekdayElem.weekday})}
             hideGray={hideNonRelated} key={String(Math.random()) + elem.day}
             selected={weekdayElem.selected} 
             currentMonth={weekdayElem.currentMonth} 
-            dayOff={weekdayElem.dayOff}>{weekdayElem.day}</DayBlock>)
+            dayOff={weekdayElem.dayOff}
+            >{weekdayElem.day}</DayBlock>)
         }
         content.push(<WeekBlock key={String(Math.random()) + elem.day}>{localContent}</WeekBlock>)
       }      
@@ -289,7 +294,7 @@ class App extends Component {
   /////
 
   /////
-  ///// CALLBACKS
+  ///// CALLBACKS CALENDER
   /////
 
   clickDay(packedDay, event)
@@ -302,6 +307,20 @@ class App extends Component {
                              weekday:packedDay.weekday}}
     })
   }
+
+  clickCross(packedDay, event)
+  {
+    console.log(packedDay)
+    this.setState((state, props) => {      
+      return {selected : null}
+    })
+  }
+
+  callbackCalender = {clickDay:this.clickDay, clickCross:this.clickCross}
+
+  /////
+  ///// CALLBACKS LEFT GUI
+  /////
 
   clickSave(event)
   {
@@ -324,10 +343,16 @@ class App extends Component {
       month:parseInt(value[1]),
       year:parseInt(value[0])
     }
-    value = {...value, weekday : this.weekday(value.year,value.month,value.day, true)} // TODO: fix weekday calculation
+    value = {...value, weekday : this.weekday(value.year,value.month,value.day, true)}
     console.log(value)
     this.setState( { selected :  value})
   }
+
+  callbackGUI = {clickSave:this.clickSave,clickDiscard:this.clickDiscard,onDateChange:this.onDateChange}
+
+  /////
+  ///// RENDER
+  /////
 
   render()
   {

@@ -6,3 +6,16 @@
     left: 0;
     background-color: rgb(255, 244, 230);
 }
+.selectionRow
+{
+    display: flex;
+    flex-direction: row;
+}
+.inputNumber
+{
+    height: 25px;
+}
+.inputButton
+{
+    height: 31px;
+}
