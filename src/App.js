@@ -82,7 +82,6 @@ class App extends Component {
 
   // Plus or minus 1 day
   // {day,month,year,weekday}
-  // TODO: add year plus
   sumDayOne(packedDay, forward)
   {
     if (forward)
