@@ -80,6 +80,63 @@ class App extends Component {
     return res;
   }
 
+  // Plus or minus 1 day
+  // {day,month,year,weekday}
+  // TODO: add year plus
+  sumDayOne(packedDay, forward)
+  {
+    if (forward)
+    {
+      packedDay.day += 1;
+      let maxDay = this.returnMonthCount(this.returnLeapYear(packedDay.year), packedDay.month)
+      if (packedDay.day > maxDay)
+      {
+        packedDay.day = 1;
+        packedDay.month += 1;
+        if (packedDay.month === 13)
+        {
+          packedDay.month = 1;
+          packedDay.year += 1;
+        }
+      }
+    }
+    else
+    {
+      packedDay.day -= 1
+      let prevMonth = packedDay.month - 1
+      if (prevMonth === 0)
+      {
+        prevMonth = 12
+      }
+      let maxDayPrev = this.returnMonthCount(this.returnLeapYear(packedDay.year), prevMonth)
+      if (packedDay.day === 0)
+      {
+        packedDay.day = maxDayPrev
+        packedDay.month -= 1;
+        if (packedDay.month === 0)
+        {
+          packedDay.month = 12;
+          packedDay.year -= 1;
+        }
+      } 
+    }
+    
+    packedDay.weekday = this.weekday(packedDay.year,packedDay.month,packedDay.day, true)
+    return packedDay
+  }
+
+  // Next week 
+  // {day,month,year,weekday}
+  nextWeek(packedDay, forward)
+  {
+    debugger
+    let weekdayStart = packedDay.weekday;
+    do {
+      packedDay = this.sumDayOne(packedDay, forward)
+    } while(weekdayStart !== packedDay.weekday)
+    return packedDay
+  }
+
   constructor(props) {
     super(props)
     this.state.months = this.constructMonthes(1990,2030)
@@ -269,14 +326,24 @@ class App extends Component {
         for(let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++)
         {
           let weekdayElem = arr[index + dayOfWeek];
-          
+
           localContent.push(<DayBlock 
             onClickDay={this.clickDay.bind(this, 
               {day:weekdayElem.day, month:weekdayElem.month,
               year:weekdayElem.year, weekday:weekdayElem.weekday})} 
-            onClickCross={this.clickCross.bind(this, 
+            onClickCross={this.clickCross.bind(this)}
+            onClickArrow_right={this.clickArrow_right.bind(this, 
               {day:weekdayElem.day, month:weekdayElem.month,
               year:weekdayElem.year, weekday:weekdayElem.weekday})}
+            onClickArrow_left={this.clickArrow_left.bind(this, 
+                {day:weekdayElem.day, month:weekdayElem.month,
+                year:weekdayElem.year, weekday:weekdayElem.weekday})}
+            onClickArrow_up={this.clickArrow_up.bind(this, 
+                  {day:weekdayElem.day, month:weekdayElem.month,
+                  year:weekdayElem.year, weekday:weekdayElem.weekday})}
+            onClickArrow_down={this.clickArrow_down.bind(this, 
+                    {day:weekdayElem.day, month:weekdayElem.month,
+                    year:weekdayElem.year, weekday:weekdayElem.weekday})}
             hideGray={hideNonRelated} key={String(Math.random()) + elem.day}
             selected={weekdayElem.selected} 
             currentMonth={weekdayElem.currentMonth} 
@@ -316,7 +383,47 @@ class App extends Component {
     })
   }
 
-  callbackCalender = {clickDay:this.clickDay, clickCross:this.clickCross}
+  clickArrow_right(packedDay)
+  {
+    let day = this.sumDayOne(packedDay, true)
+    this.setState((state, props) => {      
+      return {selected : {day:day.day,
+                             month:day.month,
+                             year:day.year,
+                             weekday:day.weekday}}
+    })
+  }
+  clickArrow_left(packedDay)
+  {
+    let day = this.sumDayOne(packedDay, false)
+    this.setState((state, props) => {      
+      return {selected : {day:day.day,
+                             month:day.month,
+                             year:day.year,
+                             weekday:day.weekday}}
+    })
+  }
+  clickArrow_up(packedDay)
+  {
+    let day = this.nextWeek(packedDay, false)
+    this.setState((state, props) => {      
+      return {selected : {day:day.day,
+                             month:day.month,
+                             year:day.year,
+                             weekday:day.weekday}}
+    })
+  }
+  clickArrow_down(packedDay)
+  {
+    let day = this.nextWeek(packedDay, true)
+    this.setState((state, props) => {      
+      return {selected : {day:day.day,
+                             month:day.month,
+                             year:day.year,
+                             weekday:day.weekday}}
+    })
+  }
+
 
   /////
   ///// CALLBACKS LEFT GUI
