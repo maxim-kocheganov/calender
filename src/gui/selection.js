@@ -21,42 +21,42 @@ function Selection(props)
             <div className='selectionControls'>
                 <input onInput={props.onDateChange} type="date" value={dateEncoded}/>
                 <div>
-                    <div classname='selectionRow'>
+                    <div className='selectionRow'>
                         <h5>Day</h5>
                         <div>
-                            <input className='inputButton'  type="button" value='-'/>
-                            <input className='inputNumber'  type="text" value={date.day}/>
-                            <input className='inputButton'  type="button" value='+'/>
+                            <input onClick={props.minusDay} className='inputButton'  type="button" value='-'/>
+                            <input onInput={props.setDay} className='inputNumber'  type="text" value={date.day}/>
+                            <input onClick={props.plusDay} className='inputButton'  type="button" value='+'/>
                         </div>
                     </div>
-                    <div classname='selectionRow'>
+                    <div className='selectionRow'>
                         <h5>Month</h5>
                         <div>
-                            <input className='inputButton'  type="button" value='-'/>
-                            <input className='inputNumber'  type="text" value={date.month}/>
-                            <input className='inputButton'  type="button" value='+'/>
+                            <input onClick={props.minusMonth} className='inputButton'  type="button" value='-'/>
+                            <input onInput={props.setMonth} className='inputNumber'  type="text" value={date.month}/>
+                            <input onClick={props.plusMonth} className='inputButton'  type="button" value='+'/>
                         </div>
                     </div>
-                    <div classname='selectionRow'>
+                    <div className='selectionRow'>
                         <h5>Year</h5>
                         <div>
-                            <input className='inputButton'  type="button" value='-'/>
-                            <input className='inputNumber'  type="text" value={date.year}/>
-                            <input className='inputButton'  type="button" value='+'/>
+                            <input onClick={props.minusYear} className='inputButton'  type="button" value='-'/>
+                            <input onInput={props.setYear } className='inputNumber'  type="text" value={date.year}/>
+                            <input onClick={props.plusYear} className='inputButton'  type="button" value='+'/>
                         </div>
                     </div>
-                    <div classname='selectionRow'>
+                    <div className='selectionRow'>
                         <h5>Weekday</h5>
                         <div>
-                            <input className='inputButton'  type="button" value='-'/>
+                            <input onClick={props.minusWeek} className='inputButton'  type="button" value='-'/>
                             <input className='inputNumber'  type="text" value={date.weekday}/>
-                            <input className='inputButton'  type="button" value='+'/>
+                            <input onClick={props.plusWeek} className='inputButton'  type="button" value='+'/>
                         </div>
                     </div>
                 </div>
                 <div>
                     <div>
-                    <div classname='selectionRow'>
+                    <div className='selectionRow'>
                         <input type="button" value="Add date" />
                     </div>
                     </div>

@@ -1,11 +1,6 @@
 import React from 'react'
 import './dayBlock.css'
 
-function Arrow(props, type, event)
-{
-    console.log(props, type, event)
-}
-
 function DayBlock(props)
 { 
     let arrowsDivs =[
@@ -47,9 +42,8 @@ function DayBlock(props)
     //if (props.hiLight === )
     let classesText = ['day']
     
-    if (props.selected != true)
-        arrowsDivs = []
-        
+    if (props.selected !== true)
+        arrowsDivs = []        
 
     return  <div className='daySpace'>
                 <div onClick={props.onClickDay} className={classesDiv.join(" ")}>

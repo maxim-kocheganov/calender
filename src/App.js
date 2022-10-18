@@ -128,11 +128,49 @@ class App extends Component {
   // {day,month,year,weekday}
   nextWeek(packedDay, forward)
   {
-    debugger
     let weekdayStart = packedDay.weekday;
     do {
       packedDay = this.sumDayOne(packedDay, forward)
     } while(weekdayStart !== packedDay.weekday)
+    return packedDay
+  }
+
+  nextMonth(packedDay,forward)
+  {
+    packedDay.month += forward ? 1 : -1
+    if (packedDay.month === 13)
+    {
+      packedDay.month = 1
+      packedDay.year += 1
+    }
+    else if (packedDay.month === 0)
+    {
+      packedDay.month = 1
+      packedDay.year -= 1
+    }
+    let dayInMonthCount = this.returnMonthCount(
+                            this.returnLeapYear(packedDay.year),
+                            packedDay.month)
+    if (packedDay.day > dayInMonthCount)
+    {
+      packedDay.day = dayInMonthCount;
+    }
+
+    packedDay.weekday = this.weekday(packedDay.year,packedDay.month,packedDay.day, true)
+
+    return packedDay
+  }
+
+  nextYear(packedDay,forward)
+  {
+    packedDay.year += forward ? 1 : -1
+    let dayInMonthCount = this.returnMonthCount(
+      this.returnLeapYear(packedDay.year),
+      packedDay.month)
+    if (packedDay.day > dayInMonthCount)
+      {
+        packedDay.day = dayInMonthCount;
+      }
     return packedDay
   }
 
@@ -363,6 +401,180 @@ class App extends Component {
   ///// CALLBACKS CALENDER
   /////
 
+  getNow()
+  {
+    return {day:1, month:1, year: 2022, weekday: 3} 
+  }
+
+  setDay(event)
+  {
+    let day = parseInt(event.target.value);
+    let packedDay = this.state.selected
+    if (packedDay === null)
+    {
+      packedDay = this.getNow
+    }
+    packedDay.day = day;
+   
+    let maxDays = this.returnMonthCount(this.returnLeapYear(packedDay.year), packedDay.month)
+  
+    if (packedDay.day > maxDays)
+    {
+      packedDay.day = maxDays
+    }
+    if (packedDay.day < 1)
+    {
+      packedDay.day = 1
+    }    
+
+    if (isNaN(packedDay.day))
+      packedDay.day = ""
+
+    packedDay.weekday = this.weekday(packedDay.year,packedDay.month,packedDay.day, true)
+    
+    this.setState((state, props) => {      
+      return {selected : packedDay}
+    })
+  }
+  setMonth(event)
+  {
+    let month = parseInt(event.target.value);
+    let packedDay = this.state.selected
+    if (packedDay === null)
+    {
+      packedDay = this.getNow
+    }
+    packedDay.month = month;
+   
+    //let maxDays = this.returnMonthCount(this.returnLeapYear(packedDay.year), packedDay.month)
+    /*
+    if (packedDay.day > maxDays)
+    {
+      packedDay.day = maxDays
+    }
+    if (packedDay.day < 1)
+    {
+      packedDay.day = 1
+    }  
+    */  
+    
+    if (isNaN(packedDay.month))
+      packedDay.month = ""
+
+    packedDay.weekday = this.weekday(packedDay.year,packedDay.month,packedDay.day, true)
+    
+    this.setState((state, props) => {      
+      return {selected : packedDay}
+    })
+  }
+  setYear(event)
+  {
+    let year = parseInt(event.target.value);
+    let packedDay = this.state.selected
+    if (packedDay === null)
+    {
+      packedDay = this.getNow
+    }
+    packedDay.year = year;
+   
+    //let maxDays = this.returnMonthCount(this.returnLeapYear(packedDay.year), packedDay.month)
+    /*
+    if (packedDay.day > maxDays)
+    {
+      packedDay.day = maxDays
+    }
+    if (packedDay.day < 1)
+    {
+      packedDay.day = 1
+    }  
+    */  
+    
+    if (isNaN(packedDay.year))
+      packedDay.year = ""
+
+    packedDay.weekday = this.weekday(packedDay.year,packedDay.month,packedDay.day, true)
+    
+    this.setState((state, props) => {      
+      return {selected : packedDay}
+    })
+  }
+  setWeekday(event)
+  {
+
+  }
+
+  minusDay()
+  {
+    let packedDay = this.state.selected
+    packedDay = this.sumDayOne(packedDay, false)
+    this.setState((state, props) => {      
+      return {selected : packedDay}
+    })
+  }
+
+  plusDay()
+  {
+    let packedDay = this.state.selected
+    packedDay = this.sumDayOne(packedDay, true)
+    this.setState((state, props) => {      
+      return {selected : packedDay}
+    })
+  }
+
+  plusWeek()
+  {
+    let packedDay = this.state.selected
+    packedDay = this.nextWeek(packedDay, true)
+    this.setState((state, props) => {      
+      return {selected : packedDay}
+    })
+  }
+
+  minusWeek()
+  {
+    let packedDay = this.state.selected
+    packedDay = this.nextWeek(packedDay, false)
+    this.setState((state, props) => {      
+      return {selected : packedDay}
+    })
+  }
+
+  plusMonth()
+  {
+    let packedDay = this.state.selected
+    packedDay = this.nextMonth(packedDay, true)
+    this.setState((state, props) => {      
+      return {selected : packedDay}
+    })
+  }
+
+  minusMonth()
+  {
+    let packedDay = this.state.selected
+    packedDay = this.nextMonth(packedDay, false)
+    this.setState((state, props) => {      
+      return {selected : packedDay}
+    })
+  }
+
+  plusYear()
+  {
+    let packedDay = this.state.selected
+    packedDay = this.nextYear(packedDay, true)
+    this.setState((state, props) => {      
+      return {selected : packedDay}
+    })
+  }
+
+  minusYear()
+  {
+    let packedDay = this.state.selected
+    packedDay = this.nextYear(packedDay, false)
+    this.setState((state, props) => {      
+      return {selected : packedDay}
+    })
+  }
+
   clickDay(packedDay, event)
   {
     console.log(packedDay)
@@ -477,6 +689,18 @@ class App extends Component {
           date={this.state.selected} 
           onClickSave={this.clickSave.bind(this)} onClickDiscard={this.clickDiscard.bind(this)}
           onDateChange={this.onDateChange.bind(this)}
+          minusDay={this.minusDay.bind(this)}
+          plusDay={this.plusDay.bind(this)}
+          minusMonth={this.minusMonth.bind(this)}
+          plusMonth={this.plusMonth.bind(this)} 
+          plusYear={this.plusYear.bind(this)}
+          minusYear={this.minusYear.bind(this)}
+          minusWeek={this.minusWeek.bind(this)}   
+          plusWeek={this.plusWeek.bind(this)}   
+          setDay={this.setDay.bind(this)}     
+          setMonth={this.setMonth.bind(this)}    
+          setYear={this.setYear.bind(this)}    
+          setWeek={this.setWeekday.bind(this)}    
         ></Selection>
                 
       </div>
